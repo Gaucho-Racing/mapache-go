@@ -4,24 +4,33 @@ import (
 	"fmt"
 )
 
-// BigEndianUnsignedIntToBinaryString converts an unsigned integer to a binary string in big endian format
-func BigEndianUnsignedIntToBinaryString(num int, num_bytes int) (string, error) {
+// BigEndianUnsignedIntToBinaryString converts an unsigned integer to a binary
+// string in big endian format. The input num will be packed into a number of
+// bytes specified by length. If num is too large to fit in length bytes, an
+// error will be returned.
+//
+// The function returns a string of 0s and 1s representing the binary.
+func BigEndianUnsignedIntToBinaryString(num int, length int) (string, error) {
 	if num < 0 {
 		return "", fmt.Errorf("cannot convert negative number to binary")
-	} else if num_bytes < 1 {
+	} else if length < 1 {
 		return "", fmt.Errorf("cannot convert to binary with less than 1 byte")
-	} else if num >= 1<<(num_bytes*8) {
-		return "", fmt.Errorf("number is too large to fit in %d bytes", num_bytes)
+	} else if num >= 1<<(length*8) {
+		return "", fmt.Errorf("number is too large to fit in %d bytes", length)
 	}
-	bytes, _ := BigEndianUnsignedIntToBinary(num, num_bytes)
+	bytes, _ := BigEndianUnsignedIntToBinary(num, length)
 	var bs = ""
-	for i := 0; i < num_bytes; i++ {
+	for i := 0; i < length; i++ {
 		bs += fmt.Sprintf("%08b", bytes[i])
 	}
 	return bs, nil
 }
 
-// BigEndianUnsignedIntToBinary converts an unsigned integer to bytes in big endian format
+// BigEndianUnsignedIntToBinary converts an unsigned integer to bytes in big endian
+// format. The input num will be packed into a number of bytes specified by length.
+// If num is too large to fit in length bytes, an error will be returned.
+//
+// The function returns a slice of bytes representing the binary.
 func BigEndianUnsignedIntToBinary(num int, num_bytes int) ([]byte, error) {
 	if num < 0 {
 		return nil, fmt.Errorf("cannot convert negative number to binary")
