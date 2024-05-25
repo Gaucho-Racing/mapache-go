@@ -1,6 +1,6 @@
 # mapache-go
 
-[![Build Status](https://github.com/gin-gonic/gin/workflows/Run%20Tests/badge.svg?branch=master)](https://github.com/gin-gonic/gin/actions?query=branch%3Amaster)
+[![Tests](https://github.com/Gaucho-Racing/mapache-go/actions/workflows/test.yml/badge.svg)](https://github.com/Gaucho-Racing/mapache-go/actions/workflows/test.yml)
 [![codecov](https://codecov.io/gh/gin-gonic/gin/branch/master/graph/badge.svg)](https://codecov.io/gh/gin-gonic/gin)
 [![GoDoc](https://pkg.go.dev/badge/github.com/gaucho-racing/mapache-go?status.svg)](https://pkg.go.dev/github.com/gaucho-racing/mapache-go?tab=doc)
 [![Sourcegraph](https://sourcegraph.com/github.com/gaucho-racing/mapache-go/-/badge.svg)](https://sourcegraph.com/github.com/gaucho-racing/mapache-go?badge)
