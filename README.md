@@ -4,8 +4,8 @@
 [![codecov](https://codecov.io/gh/Gaucho-Racing/mapache-go/graph/badge.svg?token=rwjYzu27qX)](https://codecov.io/gh/Gaucho-Racing/mapache-go)
 [![GoDoc](https://pkg.go.dev/badge/github.com/gaucho-racing/mapache-go?status.svg)](https://pkg.go.dev/github.com/gaucho-racing/mapache-go?tab=doc)
 [![Sourcegraph](https://sourcegraph.com/github.com/gaucho-racing/mapache-go/-/badge.svg)](https://sourcegraph.com/github.com/gaucho-racing/mapache-go?badge)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Release](https://img.shields.io/github/release/gaucho-racing/mapache-go.svg?style=flat-square)](https://github.com/gaucho-racing/mapache-go/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 mapache-go is a library that provides access to various abstractions used by [Mapache](https://github.com/gaucho-racing/mapache) services.
 
