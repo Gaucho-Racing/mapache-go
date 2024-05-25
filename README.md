@@ -1,7 +1,7 @@
 # mapache-go
 
 [![Tests](https://github.com/Gaucho-Racing/mapache-go/actions/workflows/test.yml/badge.svg)](https://github.com/Gaucho-Racing/mapache-go/actions/workflows/test.yml)
-[![codecov](https://codecov.io/gh/gin-gonic/gin/branch/master/graph/badge.svg)](https://codecov.io/gh/gin-gonic/gin)
+[![codecov](https://codecov.io/gh/Gaucho-Racing/mapache-go/graph/badge.svg?token=rwjYzu27qX)](https://codecov.io/gh/Gaucho-Racing/mapache-go)
 [![GoDoc](https://pkg.go.dev/badge/github.com/gaucho-racing/mapache-go?status.svg)](https://pkg.go.dev/github.com/gaucho-racing/mapache-go?tab=doc)
 [![Sourcegraph](https://sourcegraph.com/github.com/gaucho-racing/mapache-go/-/badge.svg)](https://sourcegraph.com/github.com/gaucho-racing/mapache-go?badge)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
