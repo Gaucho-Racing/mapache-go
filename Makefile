@@ -9,3 +9,6 @@ clean:
 test:
 	go test ./... -race -covermode=atomic -coverprofile=coverage.out -v
 	go tool cover -html coverage.out -o coverage.html
+
+release:
+	./scripts/release.sh
