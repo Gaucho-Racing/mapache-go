@@ -59,6 +59,26 @@ func (f Field) Encode() ([]byte, error) {
 	return nil, fmt.Errorf("invalid sign or endian")
 }
 
+// CheckBit checks if a specific bit is set in the first byte of a Field object.
+func (f Field) CheckBit(bit int) bool {
+	return (f.Bytes[0] & (1 << bit)) != 0
+}
+
+// String returns a string representation of a Field object.
+func (f Field) String() string {
+	return fmt.Sprintf("%s: %d", f.Name, f.Value)
+}
+
+// NewField creates a new Field object with the provided name, size, sign mode, and endian mode.
+func NewField(name string, size int, sign SignMode, endian Endian) Field {
+	return Field{
+		Name:   name,
+		Size:   size,
+		Sign:   sign,
+		Endian: endian,
+	}
+}
+
 // Node is a type to represent a vehicle node. It is a slice of Fields,
 // where each Field represents a specific item in the vehicle node.
 type Node []Field
