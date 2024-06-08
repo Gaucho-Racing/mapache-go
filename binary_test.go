@@ -207,9 +207,23 @@ func TestBigEndianSignedIntToBinary(t *testing.T) {
 			t.Errorf("Expected %v, got %v", expected, v)
 		}
 	})
-	// [25 153 151 231]
-	t.Run("Test 429496295 4 Byte", func(t *testing.T) {
-		testValue := 429496295
+	// [128 1]
+	t.Run("Test -32767 2 Byte", func(t *testing.T) {
+		testValue := -32767
+		v, _ := BigEndianSignedIntToBinary(testValue, 2)
+		fmt.Printf("%v\n", v)
+		var buf bytes.Buffer
+		val := int16(testValue)
+		_ = binary.Write(&buf, binary.BigEndian, val)
+		expected := buf.Bytes()
+		fmt.Printf("%v\n", expected)
+		if !reflect.DeepEqual(v, expected) {
+			t.Errorf("Expected %v, got %v", expected, v)
+		}
+	})
+	// [230 102 104 25]
+	t.Run("Test -429496295 4 Byte", func(t *testing.T) {
+		testValue := -429496295
 		v, _ := BigEndianSignedIntToBinary(testValue, 4)
 		fmt.Printf("%v\n", v)
 		var buf bytes.Buffer
@@ -221,9 +235,9 @@ func TestBigEndianSignedIntToBinary(t *testing.T) {
 			t.Errorf("Expected %v, got %v", expected, v)
 		}
 	})
-	// [0 65 137 55 71 243 174 255]
-	t.Run("Test 18446744009551615 8 Byte", func(t *testing.T) {
-		testValue := 18446744009551615
+	// [255 190 118 200 184 12 81 1]
+	t.Run("Test -18446744009551615 8 Byte", func(t *testing.T) {
+		testValue := -18446744009551615
 		v, _ := BigEndianSignedIntToBinary(testValue, 8)
 		fmt.Printf("%v\n", v)
 		var buf bytes.Buffer
