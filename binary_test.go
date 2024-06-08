@@ -8,6 +8,12 @@ import (
 )
 
 func TestBigEndianUnsignedIntToBinaryString(t *testing.T) {
+	t.Run("Test 38134 1 Byte", func(t *testing.T) {
+		_, err := BigEndianUnsignedIntToBinaryString(38134, 1)
+		if err == nil {
+			t.Error("Expected error, got nil")
+		}
+	})
 	t.Run("Test 38134 2 Byte", func(t *testing.T) {
 		v, _ := BigEndianUnsignedIntToBinaryString(38134, 2)
 		expected := "1001010011110110"
@@ -114,6 +120,12 @@ func TestBigEndianUnsignedIntToBinary(t *testing.T) {
 }
 
 func TestBigEndianSignedIntToBinaryString(t *testing.T) {
+	t.Run("Test 32767 1 Byte", func(t *testing.T) {
+		_, err := BigEndianSignedIntToBinaryString(32767, 1)
+		if err == nil {
+			t.Error("Expected error, got nil")
+		}
+	})
 	t.Run("Test 32767 2 Byte", func(t *testing.T) {
 		v, _ := BigEndianSignedIntToBinaryString(32767, 2)
 		expected := "0111111111111111"
@@ -436,6 +448,12 @@ func TestBigEndianBytesToSignedInt(t *testing.T) {
 }
 
 func TestLittleEndianUnsignedIntToBinaryString(t *testing.T) {
+	t.Run("Test 38134 1 Byte", func(t *testing.T) {
+		_, err := LittleEndianUnsignedIntToBinaryString(38134, 1)
+		if err == nil {
+			t.Error("Expected error, got nil")
+		}
+	})
 	t.Run("Test 38134 2 Byte", func(t *testing.T) {
 		v, _ := LittleEndianUnsignedIntToBinaryString(38134, 2)
 		expected := "1111011010010100"
@@ -542,6 +560,12 @@ func TestLittleEndianUnsignedIntToBinary(t *testing.T) {
 }
 
 func TestLittleEndianSignedIntToBinaryString(t *testing.T) {
+	t.Run("Test 32767 1 Byte", func(t *testing.T) {
+		_, err := LittleEndianSignedIntToBinaryString(32767, 1)
+		if err == nil {
+			t.Error("Expected error, got nil")
+		}
+	})
 	t.Run("Test 32767 2 Byte", func(t *testing.T) {
 		v, _ := LittleEndianSignedIntToBinaryString(32767, 2)
 		expected := "1111111101111111"
