@@ -137,6 +137,17 @@ func BigEndianBytesToUnsignedInt(bytes []byte) int {
 //
 // The function returns the integer value of the bytes.
 func BigEndianBytesToSignedInt(bytes []byte) int {
+	if len(bytes) == 1 {
+		bytes = append([]byte{byte(0)}, bytes...)
+		return int(int16(binary.BigEndian.Uint16(bytes)))
+	} else if len(bytes) == 2 {
+		return int(int16(binary.BigEndian.Uint16(bytes)))
+	} else if len(bytes) == 4 {
+		return int(int32(binary.BigEndian.Uint32(bytes)))
+	} else if len(bytes) == 8 {
+		return int(int64(binary.BigEndian.Uint64(bytes)))
+	}
+
 	var result int
 	if bytes[0] >= 128 {
 		result = -1 << uint((len(bytes)-1)*8)
