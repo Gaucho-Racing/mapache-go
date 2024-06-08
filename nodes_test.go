@@ -136,3 +136,32 @@ func TestField_Encode(t *testing.T) {
 		}
 	})
 }
+
+func TestField_CheckBit(t *testing.T) {
+	t.Run("Test Bit Set", func(t *testing.T) {
+		f := Field{
+			Bytes: []byte{0x01},
+		}
+		if !f.CheckBit(0) {
+			t.Error("Expected true, got", f.CheckBit(0))
+		}
+	})
+	t.Run("Test Bit Not Set", func(t *testing.T) {
+		f := Field{
+			Bytes: []byte{0x00},
+		}
+		if f.CheckBit(0) {
+			t.Error("Expected false, got", f.CheckBit(0))
+		}
+	})
+}
+
+func TestField_String(t *testing.T) {
+	f := Field{
+		Name:  "test",
+		Value: 1,
+	}
+	if f.String() != "test: 1" {
+		t.Error("Expected test: 1, got", f.String())
+	}
+}
