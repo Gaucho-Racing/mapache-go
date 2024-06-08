@@ -18,7 +18,7 @@ func TestTrip_TableName(t *testing.T) {
 
 func TestLap_TableName(t *testing.T) {
 	l := Lap{}
-	if l.TableName() != "lap" {
-		t.Error("Expected lap, got", l.TableName())
+	if l.TableName() != "trip_lap" {
+		t.Error("Expected trip_lap, got", l.TableName())
 	}
 }
