@@ -1,6 +1,7 @@
 package mapache
 
 import (
+	"encoding/binary"
 	"fmt"
 )
 
@@ -36,10 +37,28 @@ func BigEndianUnsignedIntToBinary(num int, num_bytes int) ([]byte, error) {
 		return nil, fmt.Errorf("cannot convert negative number to binary")
 	} else if num_bytes < 1 {
 		return nil, fmt.Errorf("cannot convert to binary with less than 1 byte")
-	} else if num >= 1<<(num_bytes*8) {
+	} else if num >= 1<<(num_bytes*8) && num_bytes != 8 {
 		return nil, fmt.Errorf("number is too large to fit in %d bytes", num_bytes)
 	}
+
 	var result []byte
+	if num_bytes == 1 {
+		return []byte{byte(num)}, nil
+	} else if num_bytes == 2 {
+		result = make([]byte, 2)
+		binary.BigEndian.PutUint16(result, uint16(num))
+		return result, nil
+	} else if num_bytes == 4 {
+		result = make([]byte, 4)
+		binary.BigEndian.PutUint32(result, uint32(num))
+		return result, nil
+	} else if num_bytes == 8 {
+		result = make([]byte, 8)
+		binary.BigEndian.PutUint64(result, uint64(num))
+		return result, nil
+	}
+
+	// fallback for arbitrary number of bytes
 	for i := 0; i < num_bytes; i++ {
 		result = append(result, byte(num>>uint((num_bytes-i-1)*8)))
 	}
