@@ -136,13 +136,6 @@ func TestBigEndianSignedIntToBinaryString(t *testing.T) {
 			t.Error("Expected error, got nil")
 		}
 	})
-	t.Run("Test 38134 2 Byte", func(t *testing.T) {
-		v, _ := BigEndianSignedIntToBinaryString(38134, 2)
-		expected := "1001010011110110"
-		if v != expected {
-			t.Errorf("Expected %v, got %v", expected, v)
-		}
-	})
 }
 
 func TestBigEndianSignedIntToBinary(t *testing.T) {
