@@ -450,3 +450,109 @@ func TestBigEndianBytesToSignedInt(t *testing.T) {
 		}
 	})
 }
+
+func TestLittleEndianUnsignedIntToBinaryString(t *testing.T) {
+	t.Run("Test 38134 2 Byte", func(t *testing.T) {
+		v, _ := LittleEndianUnsignedIntToBinaryString(38134, 2)
+		expected := "1111011010010100"
+		if v != expected {
+			t.Errorf("Expected %v, got %v", expected, v)
+		}
+	})
+}
+
+func TestLittleEndianUnsignedIntToBinary(t *testing.T) {
+	t.Run("Test Negative Number", func(t *testing.T) {
+		_, err := LittleEndianUnsignedIntToBinary(-1, 1)
+		if err == nil {
+			t.Error("Expected error, got nil")
+		}
+	})
+	t.Run("Test 0 Bytes", func(t *testing.T) {
+		_, err := LittleEndianUnsignedIntToBinary(100, 0)
+		if err == nil {
+			t.Error("Expected error, got nil")
+		}
+	})
+	t.Run("Test Number Too Large", func(t *testing.T) {
+		_, err := LittleEndianUnsignedIntToBinary(31241, 1)
+		if err == nil {
+			t.Error("Expected error, got nil")
+		}
+	})
+	t.Run("Test Number Too Large 2", func(t *testing.T) {
+		_, err := LittleEndianUnsignedIntToBinary(3172123, 2)
+		if err == nil {
+			t.Error("Expected error, got nil")
+		}
+	})
+	// [0]
+	t.Run("Test 0 1 Byte", func(t *testing.T) {
+		v, _ := LittleEndianUnsignedIntToBinary(0, 1)
+		expected := []byte{0}
+		if !reflect.DeepEqual(v, expected) {
+			t.Errorf("Expected %v, got %v", expected, v)
+		}
+	})
+	// [123]
+	t.Run("Test 123 1 Byte", func(t *testing.T) {
+		v, _ := LittleEndianUnsignedIntToBinary(123, 1)
+		expected := []byte{123}
+		if !reflect.DeepEqual(v, expected) {
+			t.Errorf("Expected %v, got %v", expected, v)
+		}
+	})
+	// [255]
+	t.Run("Test 255 1 Byte", func(t *testing.T) {
+		v, _ := LittleEndianUnsignedIntToBinary(255, 1)
+		expected := []byte{255}
+		if !reflect.DeepEqual(v, expected) {
+			t.Errorf("Expected %v, got %v", expected, v)
+		}
+	})
+	// [0 172]
+	t.Run("Test 172 2 Byte", func(t *testing.T) {
+		v, _ := LittleEndianUnsignedIntToBinary(172, 2)
+		expected := make([]byte, 2)
+		binary.LittleEndian.PutUint16(expected, uint16(172))
+		if !reflect.DeepEqual(v, expected) {
+			t.Errorf("Expected %v, got %v", expected, v)
+		}
+	})
+	// [148 246]
+	t.Run("Test 38134 2 Byte", func(t *testing.T) {
+		v, _ := LittleEndianUnsignedIntToBinary(38134, 2)
+		expected := make([]byte, 2)
+		binary.LittleEndian.PutUint16(expected, uint16(38134))
+		if !reflect.DeepEqual(v, expected) {
+			t.Errorf("Expected %v, got %v", expected, v)
+		}
+	})
+	// [25 153 151 231]
+	t.Run("Test 429496295 4 Byte", func(t *testing.T) {
+		v, _ := LittleEndianUnsignedIntToBinary(429496295, 4)
+		expected := make([]byte, 4)
+		binary.LittleEndian.PutUint32(expected, uint32(429496295))
+		if !reflect.DeepEqual(v, expected) {
+			t.Errorf("Expected %v, got %v", expected, v)
+		}
+	})
+	// [0 10 63 44 118 255]
+	t.Run("Test 44009551615 6 Byte", func(t *testing.T) {
+		testValue := 44009551615
+		v, _ := LittleEndianUnsignedIntToBinary(testValue, 6)
+		expected := []byte{255, 118, 44, 63, 10, 0}
+		if !reflect.DeepEqual(v, expected) {
+			t.Errorf("Expected %v, got %v", expected, v)
+		}
+	})
+	// [0 65 137 55 71 243 174 255]
+	t.Run("Test 18446744009551615 8 Byte", func(t *testing.T) {
+		v, _ := LittleEndianUnsignedIntToBinary(18446744009551615, 8)
+		expected := make([]byte, 8)
+		binary.LittleEndian.PutUint64(expected, uint64(18446744009551615))
+		if !reflect.DeepEqual(v, expected) {
+			t.Errorf("Expected %v, got %v", expected, v)
+		}
+	})
+}
