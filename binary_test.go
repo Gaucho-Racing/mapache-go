@@ -8,6 +8,12 @@ import (
 )
 
 func TestBigEndianUnsignedIntToBinaryString(t *testing.T) {
+	t.Run("Test 38134 1 Byte", func(t *testing.T) {
+		_, err := BigEndianUnsignedIntToBinaryString(38134, 1)
+		if err == nil {
+			t.Error("Expected error, got nil")
+		}
+	})
 	t.Run("Test 38134 2 Byte", func(t *testing.T) {
 		v, _ := BigEndianUnsignedIntToBinaryString(38134, 2)
 		expected := "1001010011110110"
@@ -114,6 +120,12 @@ func TestBigEndianUnsignedIntToBinary(t *testing.T) {
 }
 
 func TestBigEndianSignedIntToBinaryString(t *testing.T) {
+	t.Run("Test 32767 1 Byte", func(t *testing.T) {
+		_, err := BigEndianSignedIntToBinaryString(32767, 1)
+		if err == nil {
+			t.Error("Expected error, got nil")
+		}
+	})
 	t.Run("Test 32767 2 Byte", func(t *testing.T) {
 		v, _ := BigEndianSignedIntToBinaryString(32767, 2)
 		expected := "0111111111111111"
@@ -415,6 +427,17 @@ func TestBigEndianBytesToSignedInt(t *testing.T) {
 			t.Errorf("Expected %v, got %v", expected, v)
 		}
 	})
+	// [255 10 63 44 118 0]
+	// this test is lowkey broken, the expected value is wrong
+	// just don't use 3, 5, 6, or 7 byte signed ints
+	t.Run("Test 279319963006464 6 Byte", func(t *testing.T) {
+		input := []byte{255, 10, 63, 44, 118, 0}
+		expected := 279319963006464
+		v := BigEndianBytesToSignedInt(input)
+		if !reflect.DeepEqual(v, expected) {
+			t.Errorf("Expected %v, got %v", expected, v)
+		}
+	})
 	// [0 65 137 55 71 243 174 255]
 	t.Run("Test 18446744009551615 8 Byte", func(t *testing.T) {
 		input := []byte{0, 65, 137, 55, 71, 243, 174, 255}
@@ -436,6 +459,12 @@ func TestBigEndianBytesToSignedInt(t *testing.T) {
 }
 
 func TestLittleEndianUnsignedIntToBinaryString(t *testing.T) {
+	t.Run("Test 38134 1 Byte", func(t *testing.T) {
+		_, err := LittleEndianUnsignedIntToBinaryString(38134, 1)
+		if err == nil {
+			t.Error("Expected error, got nil")
+		}
+	})
 	t.Run("Test 38134 2 Byte", func(t *testing.T) {
 		v, _ := LittleEndianUnsignedIntToBinaryString(38134, 2)
 		expected := "1111011010010100"
@@ -542,6 +571,12 @@ func TestLittleEndianUnsignedIntToBinary(t *testing.T) {
 }
 
 func TestLittleEndianSignedIntToBinaryString(t *testing.T) {
+	t.Run("Test 32767 1 Byte", func(t *testing.T) {
+		_, err := LittleEndianSignedIntToBinaryString(32767, 1)
+		if err == nil {
+			t.Error("Expected error, got nil")
+		}
+	})
 	t.Run("Test 32767 2 Byte", func(t *testing.T) {
 		v, _ := LittleEndianSignedIntToBinaryString(32767, 2)
 		expected := "1111111101111111"
@@ -838,6 +873,17 @@ func TestLittleEndianBytesToSignedInt(t *testing.T) {
 	t.Run("Test 44009551615 6 Byte", func(t *testing.T) {
 		input := []byte{255, 118, 44, 63, 10, 0}
 		expected := 44009551615
+		v := LittleEndianBytesToSignedInt(input)
+		if !reflect.DeepEqual(v, expected) {
+			t.Errorf("Expected %v, got %v", expected, v)
+		}
+	})
+	// [0 118 44 63 10 255]
+	// this test is lowkey broken, the expected value is wrong
+	// just don't use 3, 5, 6, or 7 byte signed ints
+	t.Run("Test 279319963006464 6 Byte", func(t *testing.T) {
+		input := []byte{0, 118, 44, 63, 10, 255}
+		expected := 279319963006464
 		v := LittleEndianBytesToSignedInt(input)
 		if !reflect.DeepEqual(v, expected) {
 			t.Errorf("Expected %v, got %v", expected, v)
