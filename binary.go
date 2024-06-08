@@ -75,7 +75,6 @@ func BigEndianSignedIntToBinaryString(num int, numBytes int) (string, error) {
 	var bs = ""
 	for i := 0; i < numBytes; i++ {
 		bs += fmt.Sprintf("%08b", b[i])
-		fmt.Printf("%02x ", b[i])
 	}
 	return bs, nil
 }
@@ -94,6 +93,7 @@ func BigEndianSignedIntToBinary(num int, numBytes int) ([]byte, error) {
 	if num < minValue || num > maxValue {
 		return nil, fmt.Errorf("number is too large to fit in %d bytes", numBytes)
 	}
+
 	var result []byte
 	var buf bytes.Buffer
 	if numBytes == 1 {
@@ -218,13 +218,13 @@ func LittleEndianUnsignedIntToBinary(num int, numBytes int) ([]byte, error) {
 // num is too large to fit in length bytes, an error will be returned.
 //
 // The function returns a string of 0s and 1s representing the binary.
-func LittleEndianSignedIntToBinaryString(num int, num_bytes int) (string, error) {
-	b, err := LittleEndianSignedIntToBinary(num, num_bytes)
+func LittleEndianSignedIntToBinaryString(num int, numBytes int) (string, error) {
+	b, err := LittleEndianSignedIntToBinary(num, numBytes)
 	if err != nil {
 		return "", err
 	}
 	var bs = ""
-	for i := 0; i < num_bytes; i++ {
+	for i := 0; i < numBytes; i++ {
 		bs += fmt.Sprintf("%08b", b[i])
 	}
 	return bs, nil
@@ -235,17 +235,38 @@ func LittleEndianSignedIntToBinaryString(num int, num_bytes int) (string, error)
 // to fit in length bytes, an error will be returned.
 //
 // The function returns a slice of bytes representing the binary.
-func LittleEndianSignedIntToBinary(num int, num_bytes int) ([]byte, error) {
-	if num_bytes < 1 {
+func LittleEndianSignedIntToBinary(num int, numBytes int) ([]byte, error) {
+	if numBytes < 1 {
 		return nil, fmt.Errorf("cannot convert to binary with less than 1 byte")
 	}
-	minValue := -1 << ((num_bytes * 8) - 1)
-	maxValue := (1 << ((num_bytes * 8) - 1)) - 1
+	minValue := -1 << ((numBytes * 8) - 1)
+	maxValue := (1 << ((numBytes * 8) - 1)) - 1
 	if num < minValue || num > maxValue {
-		return nil, fmt.Errorf("number is too large to fit in %d bytes", num_bytes)
+		return nil, fmt.Errorf("number is too large to fit in %d bytes", numBytes)
 	}
+
 	var result []byte
-	for i := 0; i < num_bytes; i++ {
+	var buf bytes.Buffer
+	if numBytes == 1 {
+		val := int8(num)
+		err := binary.Write(&buf, binary.LittleEndian, val)
+		return buf.Bytes(), err
+	} else if numBytes == 2 {
+		val := int16(num)
+		err := binary.Write(&buf, binary.LittleEndian, val)
+		return buf.Bytes(), err
+	} else if numBytes == 4 {
+		val := int32(num)
+		err := binary.Write(&buf, binary.LittleEndian, val)
+		return buf.Bytes(), err
+	} else if numBytes == 8 {
+		val := int64(num)
+		err := binary.Write(&buf, binary.LittleEndian, val)
+		return buf.Bytes(), err
+	}
+
+	// fallback for arbitrary number of bytes
+	for i := 0; i < numBytes; i++ {
 		shift := uint(i * 8)
 		result = append(result, byte(num>>shift))
 	}
