@@ -97,6 +97,15 @@ func (n Node) Size() int {
 	return size
 }
 
+// String returns a string representation of a Node object.
+func (n Node) String() string {
+	str := ""
+	for _, field := range n {
+		str += field.String() + "\n"
+	}
+	return str
+}
+
 // FillFromBytes fills the fields of a Node with the bytes provided in the data slice.
 // It decodes the bytes into integer values and stores them in the Value field of each Field.
 // It returns an error if the length of the data slice does not match the total size of the Node.
