@@ -125,10 +125,10 @@ func TestField_Encode(t *testing.T) {
 	})
 	t.Run("Test Other", func(t *testing.T) {
 		f := Field{
-			Sign:   Signed,
-			Endian: LittleEndian,
-			Value:  -1,
-			Size:   -2,
+			Sign:   -1,
+			Endian: -1,
+			Value:  1,
+			Size:   2,
 		}
 		_, err := f.Encode()
 		if err == nil {
