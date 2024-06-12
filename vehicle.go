@@ -59,7 +59,7 @@ type Lap struct {
 	ID string `json:"id" gorm:"primaryKey"`
 
 	// The TripID is the unique identifier for the trip that the lap is associated with.
-	TripID string `json:"trip_id" gorm:primaryKey"`
+	TripID string `json:"trip_id" gorm:"primaryKey"`
 
 	// The Name is the public-facing name of the lap.
 	Name string `json:"name"`
