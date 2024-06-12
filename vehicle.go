@@ -71,5 +71,5 @@ type Lap struct {
 }
 
 func (Lap) TableName() string {
-	return "trip_lap"
+	return "lap"
 }
