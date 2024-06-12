@@ -14,6 +14,10 @@ type Vehicle struct {
 	// The Description is a brief description of the vehicle.
 	Description string `json:"description"`
 
+	// The Type is the type of vehicle, usually the year classification (gr23, gr24, etc).
+	// This is used to identify the vehicle's controller architecture.
+	Type string `json:"type"`
+
 	// The UploadKey is a unique identifier for the vehicle's uploaded files.
 	// This is used to authenticate the vehicle when processing uploaded data.
 	UploadKey string `json:"upload_key"`
