@@ -76,6 +76,18 @@ func (s Signal) Encode() ([]byte, error) {
 	return s.Bytes, err
 }
 
+// CheckBit returns a signal object with the raw value set to 1 if the bit at the given position is set, otherwise 0.
+// Useful if the signal is a byte that contains multiple boolean flags.
+func (s Signal) CheckBit(bit int) Signal {
+	v := (s.Bytes[0] & (1 << bit)) != 0
+	if v {
+		s.RawValue = 1
+	} else {
+		s.RawValue = 0
+	}
+	return s
+}
+
 // NewSignal creates a new Signal object with the provided vehicle ID, name, size, sign, endian, and scaling function.
 // If the scaling function is nil, the signal will not be scaled (default to just x1).
 func NewSignal(vehicleID string, name string, size int, sign SignMode, endian Endian, scalingFunc ScalingFunc) Signal {
