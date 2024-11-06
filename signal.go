@@ -16,7 +16,7 @@ type Signal struct {
 	// Value is the value of the signal post-scaling.
 	Value float64 `json:"value"`
 	// RawValue is the raw value of the signal before scaling.
-	RawValue float64 `json:"raw_value"`
+	RawValue int `json:"raw_value"`
 	// ProducedAt is the time at which the signal was produced.
 	ProducedAt time.Time `json:"produced_at"`
 	// CreatedAt is the time at which the signal was created.
@@ -43,8 +43,37 @@ func (s Signal) Scale() Signal {
 	if s.ScalingFunc == nil {
 		return s
 	}
-	s.Value = s.ScalingFunc(s.RawValue)
+	s.Value = s.ScalingFunc(float64(s.RawValue))
 	return s
+}
+
+// Decode decodes the bytes stored in a Signal object and returns a signal object with the decoded raw value.
+func (s Signal) Decode() Signal {
+	if s.Sign == Signed && s.Endian == BigEndian {
+		s.RawValue = BigEndianBytesToSignedInt(s.Bytes)
+	} else if s.Sign == Signed && s.Endian == LittleEndian {
+		s.RawValue = LittleEndianBytesToSignedInt(s.Bytes)
+	} else if s.Sign == Unsigned && s.Endian == BigEndian {
+		s.RawValue = BigEndianBytesToUnsignedInt(s.Bytes)
+	} else if s.Sign == Unsigned && s.Endian == LittleEndian {
+		s.RawValue = LittleEndianBytesToUnsignedInt(s.Bytes)
+	}
+	return s
+}
+
+// Encode encodes the integer value stored in a Field object and returns a signal object with the encoded bytes.
+func (s Signal) Encode() ([]byte, error) {
+	var err error
+	if s.Sign == Signed && s.Endian == BigEndian {
+		s.Bytes, err = BigEndianSignedIntToBinary(s.RawValue, s.Size)
+	} else if s.Sign == Signed && s.Endian == LittleEndian {
+		s.Bytes, err = LittleEndianSignedIntToBinary(s.RawValue, s.Size)
+	} else if s.Sign == Unsigned && s.Endian == BigEndian {
+		s.Bytes, err = BigEndianUnsignedIntToBinary(s.RawValue, s.Size)
+	} else if s.Sign == Unsigned && s.Endian == LittleEndian {
+		s.Bytes, err = LittleEndianUnsignedIntToBinary(s.RawValue, s.Size)
+	}
+	return s.Bytes, err
 }
 
 // NewSignal creates a new Signal object with the provided vehicle ID, name, size, sign, endian, and scaling function.
