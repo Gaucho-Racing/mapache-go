@@ -4,6 +4,24 @@ import (
 	"time"
 )
 
+// SignMode is a type to represent whether an integer is signed or unsigned.
+type SignMode int
+
+const (
+	Signed   SignMode = 1
+	Unsigned SignMode = 0
+)
+
+// Endian is a type to represent whether an integer is big endian or little endian.
+type Endian int
+
+const (
+	BigEndian    Endian = 1
+	LittleEndian Endian = 0
+)
+
+// Signal is a type to represent an individual signal coming from the vehicle.
+// This can be something like a sensor reading, a boolean flag, or a status code.
 type Signal struct {
 	// ID is a unique identifier for the signal.
 	ID string `json:"id" gorm:"primaryKey"`
@@ -62,7 +80,7 @@ func (s Signal) Decode() Signal {
 }
 
 // Encode encodes the integer value stored in a Field object and returns a signal object with the encoded bytes.
-func (s Signal) Encode() ([]byte, error) {
+func (s Signal) Encode() (Signal, error) {
 	var err error
 	if s.Sign == Signed && s.Endian == BigEndian {
 		s.Bytes, err = BigEndianSignedIntToBinary(s.RawValue, s.Size)
@@ -73,7 +91,7 @@ func (s Signal) Encode() ([]byte, error) {
 	} else if s.Sign == Unsigned && s.Endian == LittleEndian {
 		s.Bytes, err = LittleEndianUnsignedIntToBinary(s.RawValue, s.Size)
 	}
-	return s.Bytes, err
+	return s, err
 }
 
 // CheckBit returns a signal object with the raw value set to 1 if the bit at the given position is set, otherwise 0.

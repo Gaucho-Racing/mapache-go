@@ -59,7 +59,7 @@
 				
 				<option value="file1">github.com/gaucho-racing/mapache-go/nodes.go (100.0%)</option>
 				
-				<option value="file2">github.com/gaucho-racing/mapache-go/signal.go (60.0%)</option>
+				<option value="file2">github.com/gaucho-racing/mapache-go/signal.go (10.0%)</option>
 				
 				<option value="file3">github.com/gaucho-racing/mapache-go/user.go (100.0%)</option>
 				
@@ -547,7 +547,9 @@ func (n Node) FillFromInts(ints []int) error <span class="cov6" title="3">{
 		
 		<pre class="file" id="file2" style="display: none">package mapache
 
-import "time"
+import (
+        "time"
+)
 
 type Signal struct {
         // ID is a unique identifier for the signal.
@@ -561,13 +563,19 @@ type Signal struct {
         // Value is the value of the signal post-scaling.
         Value float64 `json:"value"`
         // RawValue is the raw value of the signal before scaling.
-        RawValue float64 `json:"raw_value"`
-        // ScalingFunc is the function that is used to scale the signal.
-        ScalingFunc ScalingFunc `json:"scaling_func" gorm:"-"`
+        RawValue int `json:"raw_value"`
         // ProducedAt is the time at which the signal was produced.
         ProducedAt time.Time `json:"produced_at"`
         // CreatedAt is the time at which the signal was created.
         CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime;precision:6"`
+
+        // Bytes, Size, Sign, and Endian are used to properly decode and encode the signal.
+        Bytes  []byte   `json:"-" gorm:"-"`
+        Size   int      `json:"-" gorm:"-"`
+        Sign   SignMode `json:"-" gorm:"-"`
+        Endian Endian   `json:"-" gorm:"-"`
+        // ScalingFunc is the function that is used to scale the signal.
+        ScalingFunc ScalingFunc `json:"-" gorm:"-"`
 }
 
 func (Signal) TableName() string <span class="cov0" title="0">{
@@ -582,9 +590,63 @@ func (s Signal) Scale() Signal <span class="cov8" title="1">{
         if s.ScalingFunc == nil </span><span class="cov0" title="0">{
                 return s
         }</span>
-        <span class="cov8" title="1">s.Value = s.ScalingFunc(s.RawValue)
+        <span class="cov8" title="1">s.Value = s.ScalingFunc(float64(s.RawValue))
         return s</span>
 }
+
+// Decode decodes the bytes stored in a Signal object and returns a signal object with the decoded raw value.
+func (s Signal) Decode() Signal <span class="cov0" title="0">{
+        if s.Sign == Signed &amp;&amp; s.Endian == BigEndian </span><span class="cov0" title="0">{
+                s.RawValue = BigEndianBytesToSignedInt(s.Bytes)
+        }</span> else<span class="cov0" title="0"> if s.Sign == Signed &amp;&amp; s.Endian == LittleEndian </span><span class="cov0" title="0">{
+                s.RawValue = LittleEndianBytesToSignedInt(s.Bytes)
+        }</span> else<span class="cov0" title="0"> if s.Sign == Unsigned &amp;&amp; s.Endian == BigEndian </span><span class="cov0" title="0">{
+                s.RawValue = BigEndianBytesToUnsignedInt(s.Bytes)
+        }</span> else<span class="cov0" title="0"> if s.Sign == Unsigned &amp;&amp; s.Endian == LittleEndian </span><span class="cov0" title="0">{
+                s.RawValue = LittleEndianBytesToUnsignedInt(s.Bytes)
+        }</span>
+        <span class="cov0" title="0">return s</span>
+}
+
+// Encode encodes the integer value stored in a Field object and returns a signal object with the encoded bytes.
+func (s Signal) Encode() ([]byte, error) <span class="cov0" title="0">{
+        var err error
+        if s.Sign == Signed &amp;&amp; s.Endian == BigEndian </span><span class="cov0" title="0">{
+                s.Bytes, err = BigEndianSignedIntToBinary(s.RawValue, s.Size)
+        }</span> else<span class="cov0" title="0"> if s.Sign == Signed &amp;&amp; s.Endian == LittleEndian </span><span class="cov0" title="0">{
+                s.Bytes, err = LittleEndianSignedIntToBinary(s.RawValue, s.Size)
+        }</span> else<span class="cov0" title="0"> if s.Sign == Unsigned &amp;&amp; s.Endian == BigEndian </span><span class="cov0" title="0">{
+                s.Bytes, err = BigEndianUnsignedIntToBinary(s.RawValue, s.Size)
+        }</span> else<span class="cov0" title="0"> if s.Sign == Unsigned &amp;&amp; s.Endian == LittleEndian </span><span class="cov0" title="0">{
+                s.Bytes, err = LittleEndianUnsignedIntToBinary(s.RawValue, s.Size)
+        }</span>
+        <span class="cov0" title="0">return s.Bytes, err</span>
+}
+
+// CheckBit returns a signal object with the raw value set to 1 if the bit at the given position is set, otherwise 0.
+// Useful if the signal is a byte that contains multiple boolean flags.
+func (s Signal) CheckBit(bit int) Signal <span class="cov0" title="0">{
+        v := (s.Bytes[0] &amp; (1 &lt;&lt; bit)) != 0
+        if v </span><span class="cov0" title="0">{
+                s.RawValue = 1
+        }</span> else<span class="cov0" title="0"> {
+                s.RawValue = 0
+        }</span>
+        <span class="cov0" title="0">return s</span>
+}
+
+// NewSignal creates a new Signal object with the provided vehicle ID, name, size, sign, endian, and scaling function.
+// If the scaling function is nil, the signal will not be scaled (default to just x1).
+func NewSignal(vehicleID string, name string, size int, sign SignMode, endian Endian, scalingFunc ScalingFunc) Signal <span class="cov0" title="0">{
+        return Signal{
+                VehicleID:   vehicleID,
+                Name:        name,
+                Size:        size,
+                Sign:        sign,
+                Endian:      endian,
+                ScalingFunc: scalingFunc,
+        }
+}</span>
 </pre>
 		
 		<pre class="file" id="file3" style="display: none">package mapache
