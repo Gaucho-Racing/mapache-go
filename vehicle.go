@@ -33,23 +33,17 @@ func (Vehicle) TableName() string {
 type Trip struct {
 	// ID is a unique identifier for the trip.
 	ID string `json:"id" gorm:"primaryKey"`
-
 	// The VehicleID is the unique identifier for the vehicle that the trip is associated with.
 	VehicleID string `json:"vehicle_id"`
-
 	// The Name is the public-facing name of the trip.
 	Name string `json:"name"`
-
 	// The Description is a brief description of the trip. This can include any notes or comments.
 	// In theory, would be a markdown-supported field.
 	Description string `json:"description"`
-
 	// The StartTime is the time at which the trip started.
 	StartTime time.Time `json:"start_time"`
-
 	// The EndTime is the time at which the trip is over.
 	EndTime time.Time `json:"end_time"`
-
 	// The Laps field is a list of laps that are associated with the trip.
 	// Laps are essentially markers that separate the trip into smaller segments.
 	Laps []Lap `json:"laps"`
@@ -62,13 +56,10 @@ func (Trip) TableName() string {
 type Lap struct {
 	// ID is a unique identifier for the lap.
 	ID string `json:"id" gorm:"primaryKey"`
-
 	// The TripID is the unique identifier for the trip that the lap is associated with.
 	TripID string `json:"trip_id" gorm:"primaryKey"`
-
 	// The Name is the public-facing name of the lap.
 	Name string `json:"name"`
-
 	// The Timestamp is the time at which the lap segment is over.
 	// The start time of the lap would be inferred from the previous lap's end time
 	// or the beginning of the trip.
