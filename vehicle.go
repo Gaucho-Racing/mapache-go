@@ -41,6 +41,7 @@ type Trip struct {
 	Name string `json:"name"`
 
 	// The Description is a brief description of the trip. This can include any notes or comments.
+	// In theory, would be a markdown-supported field.
 	Description string `json:"description"`
 
 	// The StartTime is the time at which the trip started.

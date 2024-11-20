@@ -34,9 +34,9 @@ type Signal struct {
 	Value float64 `json:"value"`
 	// RawValue is the raw value of the signal before scaling.
 	RawValue int `json:"raw_value"`
-	// ProducedAt is the time at which the signal was produced.
+	// ProducedAt is the time at which the signal was produced by the vehicle.
 	ProducedAt time.Time `json:"produced_at"`
-	// CreatedAt is the time at which the signal was created.
+	// CreatedAt is the time at which the signal was actually stored in the database.
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime;precision:6"`
 
 	// Bytes, Size, Sign, and Endian are used to properly decode and encode the signal.
