@@ -1,6 +1,7 @@
 package mapache
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -29,8 +30,6 @@ type Signal struct {
 	VehicleID string `json:"vehicle_id"`
 	// Name represents the type of signal.
 	Name string `json:"name"`
-	// Description is a brief description of the signal.
-	Description string `json:"description"`
 	// Value is the value of the signal post-scaling.
 	Value float64 `json:"value"`
 	// RawValue is the raw value of the signal before scaling.
@@ -90,6 +89,8 @@ func (s Signal) Encode() (Signal, error) {
 		s.Bytes, err = BigEndianUnsignedIntToBinary(s.RawValue, s.Size)
 	} else if s.Sign == Unsigned && s.Endian == LittleEndian {
 		s.Bytes, err = LittleEndianUnsignedIntToBinary(s.RawValue, s.Size)
+	} else {
+		return s, fmt.Errorf("invalid sign or endian")
 	}
 	return s, err
 }

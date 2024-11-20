@@ -57,9 +57,9 @@
 				
 				<option value="file0">github.com/gaucho-racing/mapache-go/binary.go (100.0%)</option>
 				
-				<option value="file1">github.com/gaucho-racing/mapache-go/nodes.go (100.0%)</option>
+				<option value="file1">github.com/gaucho-racing/mapache-go/nodes.go (0.0%)</option>
 				
-				<option value="file2">github.com/gaucho-racing/mapache-go/signal.go (10.0%)</option>
+				<option value="file2">github.com/gaucho-racing/mapache-go/signal.go (64.5%)</option>
 				
 				<option value="file3">github.com/gaucho-racing/mapache-go/user.go (100.0%)</option>
 				
@@ -117,23 +117,23 @@ func BigEndianUnsignedIntToBinaryString(num int, numBytes int) (string, error) <
 // If num is too large to fit in length bytes, an error will be returned.
 //
 // The function returns a slice of bytes representing the binary.
-func BigEndianUnsignedIntToBinary(num int, numBytes int) ([]byte, error) <span class="cov8" title="16">{
+func BigEndianUnsignedIntToBinary(num int, numBytes int) ([]byte, error) <span class="cov8" title="15">{
         if num &lt; 0 </span><span class="cov1" title="1">{
                 return nil, fmt.Errorf("cannot convert negative number to binary")
-        }</span> else<span class="cov8" title="15"> if numBytes &lt; 1 </span><span class="cov1" title="1">{
+        }</span> else<span class="cov8" title="14"> if numBytes &lt; 1 </span><span class="cov1" title="1">{
                 return nil, fmt.Errorf("cannot convert to binary with less than 1 byte")
-        }</span> else<span class="cov8" title="14"> if num &gt;= 1&lt;&lt;(numBytes*8) &amp;&amp; numBytes &lt; 8 </span><span class="cov3" title="3">{
+        }</span> else<span class="cov8" title="13"> if num &gt;= 1&lt;&lt;(numBytes*8) &amp;&amp; numBytes &lt; 8 </span><span class="cov4" title="3">{
                 return nil, fmt.Errorf("number is too large to fit in %d bytes", numBytes)
         }</span>
 
-        <span class="cov7" title="11">var result []byte
-        if numBytes == 1 </span><span class="cov3" title="3">{
+        <span class="cov7" title="10">var result []byte
+        if numBytes == 1 </span><span class="cov4" title="3">{
                 return []byte{byte(num)}, nil
-        }</span> else<span class="cov6" title="8"> if numBytes == 2 </span><span class="cov5" title="5">{
+        }</span> else<span class="cov6" title="7"> if numBytes == 2 </span><span class="cov4" title="4">{
                 result = make([]byte, 2)
                 binary.BigEndian.PutUint16(result, uint16(num))
                 return result, nil
-        }</span> else<span class="cov3" title="3"> if numBytes == 4 </span><span class="cov1" title="1">{
+        }</span> else<span class="cov4" title="3"> if numBytes == 4 </span><span class="cov1" title="1">{
                 result = make([]byte, 4)
                 binary.BigEndian.PutUint32(result, uint32(num))
                 return result, nil
@@ -196,7 +196,7 @@ func BigEndianSignedIntToBinary(num int, numBytes int) ([]byte, error) <span cla
                 val := int32(num)
                 err := binary.Write(&amp;buf, binary.BigEndian, val)
                 return buf.Bytes(), err
-        }</span> else<span class="cov3" title="3"> if numBytes == 8 </span><span class="cov2" title="2">{
+        }</span> else<span class="cov4" title="3"> if numBytes == 8 </span><span class="cov2" title="2">{
                 val := int64(num)
                 err := binary.Write(&amp;buf, binary.BigEndian, val)
                 return buf.Bytes(), err
@@ -213,19 +213,19 @@ func BigEndianSignedIntToBinary(num int, numBytes int) ([]byte, error) <span cla
 // BigEndianBytesToUnsignedInt converts bytes to an unsigned integer in big endian format.
 //
 // The function returns the integer value of the bytes.
-func BigEndianBytesToUnsignedInt(bytes []byte) int <span class="cov7" title="10">{
+func BigEndianBytesToUnsignedInt(bytes []byte) int <span class="cov7" title="9">{
         var result int
-        for i := 0; i &lt; len(bytes); i++ </span><span class="cov10" title="29">{
+        for i := 0; i &lt; len(bytes); i++ </span><span class="cov10" title="27">{
                 result += int(bytes[i]) &lt;&lt; uint((len(bytes)-i-1)*8)
         }</span>
-        <span class="cov7" title="10">return result</span>
+        <span class="cov7" title="9">return result</span>
 }
 
 // BigEndianBytesToSignedInt converts bytes to a signed integer in big endian format.
 //
 // The function returns the integer value of the bytes.
-func BigEndianBytesToSignedInt(bytes []byte) int <span class="cov7" title="13">{
-        if len(bytes) == 1 </span><span class="cov3" title="3">{
+func BigEndianBytesToSignedInt(bytes []byte) int <span class="cov8" title="13">{
+        if len(bytes) == 1 </span><span class="cov4" title="3">{
                 bytes = append([]byte{byte(0)}, bytes...)
                 return int(int16(binary.BigEndian.Uint16(bytes)))
         }</span> else<span class="cov7" title="10"> if len(bytes) == 2 </span><span class="cov4" title="4">{
@@ -274,18 +274,18 @@ func LittleEndianUnsignedIntToBinary(num int, numBytes int) ([]byte, error) <spa
                 return nil, fmt.Errorf("cannot convert negative number to binary")
         }</span> else<span class="cov8" title="14"> if numBytes &lt; 1 </span><span class="cov1" title="1">{
                 return nil, fmt.Errorf("cannot convert to binary with less than 1 byte")
-        }</span> else<span class="cov7" title="13"> if num &gt;= 1&lt;&lt;(numBytes*8) &amp;&amp; numBytes &lt; 8 </span><span class="cov3" title="3">{
+        }</span> else<span class="cov8" title="13"> if num &gt;= 1&lt;&lt;(numBytes*8) &amp;&amp; numBytes &lt; 8 </span><span class="cov4" title="3">{
                 return nil, fmt.Errorf("number is too large to fit in %d bytes", numBytes)
         }</span>
 
         <span class="cov7" title="10">var result []byte
-        if numBytes == 1 </span><span class="cov3" title="3">{
+        if numBytes == 1 </span><span class="cov4" title="3">{
                 return []byte{byte(num)}, nil
         }</span> else<span class="cov6" title="7"> if numBytes == 2 </span><span class="cov4" title="4">{
                 result = make([]byte, 2)
                 binary.LittleEndian.PutUint16(result, uint16(num))
                 return result, nil
-        }</span> else<span class="cov3" title="3"> if numBytes == 4 </span><span class="cov1" title="1">{
+        }</span> else<span class="cov4" title="3"> if numBytes == 4 </span><span class="cov1" title="1">{
                 result = make([]byte, 4)
                 binary.LittleEndian.PutUint32(result, uint32(num))
                 return result, nil
@@ -348,7 +348,7 @@ func LittleEndianSignedIntToBinary(num int, numBytes int) ([]byte, error) <span 
                 val := int32(num)
                 err := binary.Write(&amp;buf, binary.LittleEndian, val)
                 return buf.Bytes(), err
-        }</span> else<span class="cov3" title="3"> if numBytes == 8 </span><span class="cov2" title="2">{
+        }</span> else<span class="cov4" title="3"> if numBytes == 8 </span><span class="cov2" title="2">{
                 val := int64(num)
                 err := binary.Write(&amp;buf, binary.LittleEndian, val)
                 return buf.Bytes(), err
@@ -365,19 +365,19 @@ func LittleEndianSignedIntToBinary(num int, numBytes int) ([]byte, error) <span 
 // LittleEndianBytesToUnsignedInt converts bytes to an unsigned integer in little endian format.
 //
 // The function returns the integer value of the bytes.
-func LittleEndianBytesToUnsignedInt(bytes []byte) int <span class="cov6" title="9">{
+func LittleEndianBytesToUnsignedInt(bytes []byte) int <span class="cov7" title="9">{
         var result int
-        for i := 0; i &lt; len(bytes); i++ </span><span class="cov9" title="27">{
+        for i := 0; i &lt; len(bytes); i++ </span><span class="cov10" title="27">{
                 result += int(bytes[i]) &lt;&lt; uint(i*8)
         }</span>
-        <span class="cov6" title="9">return result</span>
+        <span class="cov7" title="9">return result</span>
 }
 
 // LittleEndianBytesToSignedInt converts bytes to a signed integer in little endian format.
 //
 // The function returns the integer value of the bytes.
-func LittleEndianBytesToSignedInt(bytes []byte) int <span class="cov7" title="13">{
-        if len(bytes) == 1 </span><span class="cov3" title="3">{
+func LittleEndianBytesToSignedInt(bytes []byte) int <span class="cov8" title="13">{
+        if len(bytes) == 1 </span><span class="cov4" title="3">{
                 bytes = append(bytes, byte(0))
                 return int(int16(binary.LittleEndian.Uint16(bytes)))
         }</span> else<span class="cov7" title="10"> if len(bytes) == 2 </span><span class="cov4" title="4">{
@@ -404,6 +404,66 @@ func LittleEndianBytesToSignedInt(bytes []byte) int <span class="cov7" title="13
 
 import "fmt"
 
+// Node is a type to represent a vehicle node. It is a slice of Signals,
+// where each Signal represents a specific item in the vehicle node.
+type Node []Signal
+
+// Length returns the number of fields in a Node.
+func (n Node) Length() int <span class="cov0" title="0">{
+        return len(n)
+}</span>
+
+// Size returns the total size of a Node in bytes.
+func (n Node) Size() int <span class="cov0" title="0">{
+        size := 0
+        for _, field := range n </span><span class="cov0" title="0">{
+                size += field.Size
+        }</span>
+        <span class="cov0" title="0">return size</span>
+}
+
+// FillFromBytes fills the fields of a Node with the bytes provided in the data slice.
+// It decodes the bytes into integer values and stores them in the RawValue field of each Signal.
+// It returns an error if the length of the data slice does not match the total size of the Node.
+func (n Node) FillFromBytes(data []byte) error <span class="cov0" title="0">{
+        if len(data) != n.Size() </span><span class="cov0" title="0">{
+                return fmt.Errorf("invalid data length, expected %d bytes", n.Size())
+        }</span>
+        <span class="cov0" title="0">counter := 0
+        for i, signal := range n </span><span class="cov0" title="0">{
+                signal.Bytes = data[counter : counter+signal.Size]
+                counter += signal.Size
+                n[i] = signal.Decode()
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+// FillFromInts fills the fields of a Node with the integer values provided in the ints slice.
+// It encodes the integer values into bytes and stores them in the Bytes field of each Signal.
+// It returns an error if the length of the ints slice does not match the number of fields in the Node.
+func (n Node) FillFromInts(ints []int) error <span class="cov0" title="0">{
+        if len(ints) != n.Length() </span><span class="cov0" title="0">{
+                return fmt.Errorf("invalid ints length, expected %d ints", n.Length())
+        }</span>
+        <span class="cov0" title="0">for i, signal := range n </span><span class="cov0" title="0">{
+                signal.RawValue = ints[i]
+                signal, err := signal.Encode()
+                if err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+                <span class="cov0" title="0">n[i] = signal</span>
+        }
+        <span class="cov0" title="0">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package mapache
+
+import (
+        "fmt"
+        "time"
+)
+
 // SignMode is a type to represent whether an integer is signed or unsigned.
 type SignMode int
 
@@ -420,137 +480,8 @@ const (
         LittleEndian Endian = 0
 )
 
-// Field is a struct to represent a specific item in a vehicle node.
-// It contains the name of the field, the bytes that represent the field,
-// the integer value of the field, the size of the field in bytes, the sign
-// mode of the field, and the endian mode of the field.
-type Field struct {
-        Name   string
-        Bytes  []byte
-        Value  int
-        Size   int
-        Sign   SignMode
-        Endian Endian
-}
-
-// Decode decodes the bytes stored in a Field object and returns the integer value.
-func (f Field) Decode() int <span class="cov9" title="6">{
-        if f.Sign == Signed &amp;&amp; f.Endian == BigEndian </span><span class="cov1" title="1">{
-                return BigEndianBytesToSignedInt(f.Bytes)
-        }</span> else<span class="cov8" title="5"> if f.Sign == Signed &amp;&amp; f.Endian == LittleEndian </span><span class="cov1" title="1">{
-                return LittleEndianBytesToSignedInt(f.Bytes)
-        }</span> else<span class="cov7" title="4"> if f.Sign == Unsigned &amp;&amp; f.Endian == BigEndian </span><span class="cov4" title="2">{
-                return BigEndianBytesToUnsignedInt(f.Bytes)
-        }</span> else<span class="cov4" title="2"> if f.Sign == Unsigned &amp;&amp; f.Endian == LittleEndian </span><span class="cov1" title="1">{
-                return LittleEndianBytesToUnsignedInt(f.Bytes)
-        }</span>
-        <span class="cov1" title="1">return 0</span>
-}
-
-// Encode encodes the integer value stored in a Field object and returns the bytes.
-func (f Field) Encode() ([]byte, error) <span class="cov10" title="7">{
-        if f.Sign == Signed &amp;&amp; f.Endian == BigEndian </span><span class="cov1" title="1">{
-                return BigEndianSignedIntToBinary(f.Value, f.Size)
-        }</span> else<span class="cov9" title="6"> if f.Sign == Signed &amp;&amp; f.Endian == LittleEndian </span><span class="cov1" title="1">{
-                return LittleEndianSignedIntToBinary(f.Value, f.Size)
-        }</span> else<span class="cov8" title="5"> if f.Sign == Unsigned &amp;&amp; f.Endian == BigEndian </span><span class="cov4" title="2">{
-                return BigEndianUnsignedIntToBinary(f.Value, f.Size)
-        }</span> else<span class="cov6" title="3"> if f.Sign == Unsigned &amp;&amp; f.Endian == LittleEndian </span><span class="cov1" title="1">{
-                return LittleEndianUnsignedIntToBinary(f.Value, f.Size)
-        }</span>
-        <span class="cov4" title="2">return nil, fmt.Errorf("invalid sign or endian")</span>
-}
-
-// CheckBit checks if a specific bit is set in the first byte of a Field object.
-func (f Field) CheckBit(bit int) bool <span class="cov4" title="2">{
-        return (f.Bytes[0] &amp; (1 &lt;&lt; bit)) != 0
-}</span>
-
-// String returns a string representation of a Field object.
-func (f Field) String() string <span class="cov4" title="2">{
-        return fmt.Sprintf("%s: %d", f.Name, f.Value)
-}</span>
-
-// NewField creates a new Field object with the provided name, size, sign mode, and endian mode.
-func NewField(name string, size int, sign SignMode, endian Endian) Field <span class="cov1" title="1">{
-        return Field{
-                Name:   name,
-                Size:   size,
-                Sign:   sign,
-                Endian: endian,
-        }
-}</span>
-
-// Node is a type to represent a vehicle node. It is a slice of Fields,
-// where each Field represents a specific item in the vehicle node.
-type Node []Field
-
-// Length returns the number of fields in a Node.
-func (n Node) Length() int <span class="cov8" title="5">{
-        return len(n)
-}</span>
-
-// Size returns the total size of a Node in bytes.
-func (n Node) Size() int <span class="cov7" title="4">{
-        size := 0
-        for _, field := range n </span><span class="cov7" title="4">{
-                size += field.Size
-        }</span>
-        <span class="cov7" title="4">return size</span>
-}
-
-// String returns a string representation of a Node object.
-func (n Node) String() string <span class="cov1" title="1">{
-        str := ""
-        for _, field := range n </span><span class="cov1" title="1">{
-                str += field.String() + "\n"
-        }</span>
-        <span class="cov1" title="1">return str</span>
-}
-
-// FillFromBytes fills the fields of a Node with the bytes provided in the data slice.
-// It decodes the bytes into integer values and stores them in the Value field of each Field.
-// It returns an error if the length of the data slice does not match the total size of the Node.
-func (n Node) FillFromBytes(data []byte) error <span class="cov4" title="2">{
-        if len(data) != n.Size() </span><span class="cov1" title="1">{
-                return fmt.Errorf("invalid data length, expected %d bytes", n.Size())
-        }</span>
-        <span class="cov1" title="1">counter := 0
-        for i, field := range n </span><span class="cov1" title="1">{
-                field.Bytes = data[counter : counter+field.Size]
-                counter += field.Size
-                field.Value = field.Decode()
-                n[i] = field
-        }</span>
-        <span class="cov1" title="1">return nil</span>
-}
-
-// FillFromInts fills the fields of a Node with the integer values provided in the ints slice.
-// It encodes the integer values into bytes and stores them in the Bytes field of each Field.
-// It returns an error if the length of the ints slice does not match the number of fields in the Node.
-func (n Node) FillFromInts(ints []int) error <span class="cov6" title="3">{
-        if len(ints) != n.Length() </span><span class="cov1" title="1">{
-                return fmt.Errorf("invalid ints length, expected %d ints", n.Length())
-        }</span>
-        <span class="cov4" title="2">for i, field := range n </span><span class="cov4" title="2">{
-                field.Value = ints[i]
-                bytes, err := field.Encode()
-                if err != nil </span><span class="cov1" title="1">{
-                        return err
-                }</span>
-                <span class="cov1" title="1">field.Bytes = bytes
-                n[i] = field</span>
-        }
-        <span class="cov1" title="1">return nil</span>
-}
-</pre>
-		
-		<pre class="file" id="file2" style="display: none">package mapache
-
-import (
-        "time"
-)
-
+// Signal is a type to represent an individual signal coming from the vehicle.
+// This can be something like a sensor reading, a boolean flag, or a status code.
 type Signal struct {
         // ID is a unique identifier for the signal.
         ID string `json:"id" gorm:"primaryKey"`
@@ -558,8 +489,6 @@ type Signal struct {
         VehicleID string `json:"vehicle_id"`
         // Name represents the type of signal.
         Name string `json:"name"`
-        // Description is a brief description of the signal.
-        Description string `json:"description"`
         // Value is the value of the signal post-scaling.
         Value float64 `json:"value"`
         // RawValue is the raw value of the signal before scaling.
@@ -586,41 +515,43 @@ func (Signal) TableName() string <span class="cov0" title="0">{
 type ScalingFunc func(float64) float64
 
 // Scale scales the value of the signal by the given function.
-func (s Signal) Scale() Signal <span class="cov8" title="1">{
+func (s Signal) Scale() Signal <span class="cov0" title="0">{
         if s.ScalingFunc == nil </span><span class="cov0" title="0">{
                 return s
         }</span>
-        <span class="cov8" title="1">s.Value = s.ScalingFunc(float64(s.RawValue))
+        <span class="cov0" title="0">s.Value = s.ScalingFunc(float64(s.RawValue))
         return s</span>
 }
 
 // Decode decodes the bytes stored in a Signal object and returns a signal object with the decoded raw value.
-func (s Signal) Decode() Signal <span class="cov0" title="0">{
-        if s.Sign == Signed &amp;&amp; s.Endian == BigEndian </span><span class="cov0" title="0">{
+func (s Signal) Decode() Signal <span class="cov10" title="5">{
+        if s.Sign == Signed &amp;&amp; s.Endian == BigEndian </span><span class="cov1" title="1">{
                 s.RawValue = BigEndianBytesToSignedInt(s.Bytes)
-        }</span> else<span class="cov0" title="0"> if s.Sign == Signed &amp;&amp; s.Endian == LittleEndian </span><span class="cov0" title="0">{
+        }</span> else<span class="cov8" title="4"> if s.Sign == Signed &amp;&amp; s.Endian == LittleEndian </span><span class="cov1" title="1">{
                 s.RawValue = LittleEndianBytesToSignedInt(s.Bytes)
-        }</span> else<span class="cov0" title="0"> if s.Sign == Unsigned &amp;&amp; s.Endian == BigEndian </span><span class="cov0" title="0">{
+        }</span> else<span class="cov7" title="3"> if s.Sign == Unsigned &amp;&amp; s.Endian == BigEndian </span><span class="cov1" title="1">{
                 s.RawValue = BigEndianBytesToUnsignedInt(s.Bytes)
-        }</span> else<span class="cov0" title="0"> if s.Sign == Unsigned &amp;&amp; s.Endian == LittleEndian </span><span class="cov0" title="0">{
+        }</span> else<span class="cov4" title="2"> if s.Sign == Unsigned &amp;&amp; s.Endian == LittleEndian </span><span class="cov1" title="1">{
                 s.RawValue = LittleEndianBytesToUnsignedInt(s.Bytes)
         }</span>
-        <span class="cov0" title="0">return s</span>
+        <span class="cov10" title="5">return s</span>
 }
 
 // Encode encodes the integer value stored in a Field object and returns a signal object with the encoded bytes.
-func (s Signal) Encode() ([]byte, error) <span class="cov0" title="0">{
+func (s Signal) Encode() (Signal, error) <span class="cov10" title="5">{
         var err error
-        if s.Sign == Signed &amp;&amp; s.Endian == BigEndian </span><span class="cov0" title="0">{
+        if s.Sign == Signed &amp;&amp; s.Endian == BigEndian </span><span class="cov1" title="1">{
                 s.Bytes, err = BigEndianSignedIntToBinary(s.RawValue, s.Size)
-        }</span> else<span class="cov0" title="0"> if s.Sign == Signed &amp;&amp; s.Endian == LittleEndian </span><span class="cov0" title="0">{
+        }</span> else<span class="cov8" title="4"> if s.Sign == Signed &amp;&amp; s.Endian == LittleEndian </span><span class="cov1" title="1">{
                 s.Bytes, err = LittleEndianSignedIntToBinary(s.RawValue, s.Size)
-        }</span> else<span class="cov0" title="0"> if s.Sign == Unsigned &amp;&amp; s.Endian == BigEndian </span><span class="cov0" title="0">{
+        }</span> else<span class="cov7" title="3"> if s.Sign == Unsigned &amp;&amp; s.Endian == BigEndian </span><span class="cov1" title="1">{
                 s.Bytes, err = BigEndianUnsignedIntToBinary(s.RawValue, s.Size)
-        }</span> else<span class="cov0" title="0"> if s.Sign == Unsigned &amp;&amp; s.Endian == LittleEndian </span><span class="cov0" title="0">{
+        }</span> else<span class="cov4" title="2"> if s.Sign == Unsigned &amp;&amp; s.Endian == LittleEndian </span><span class="cov1" title="1">{
                 s.Bytes, err = LittleEndianUnsignedIntToBinary(s.RawValue, s.Size)
+        }</span> else<span class="cov1" title="1"> {
+                return s, fmt.Errorf("invalid sign or endian")
         }</span>
-        <span class="cov0" title="0">return s.Bytes, err</span>
+        <span class="cov8" title="4">return s, err</span>
 }
 
 // CheckBit returns a signal object with the raw value set to 1 if the bit at the given position is set, otherwise 0.
