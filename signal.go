@@ -1,7 +1,6 @@
 package mapache
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -38,84 +37,76 @@ type Signal struct {
 	ProducedAt time.Time `json:"produced_at"`
 	// CreatedAt is the time at which the signal was actually stored in the database.
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime;precision:6"`
-
-	// Bytes, Size, Sign, and Endian are used to properly decode and encode the signal.
-	Bytes  []byte   `json:"-" gorm:"-"`
-	Size   int      `json:"-" gorm:"-"`
-	Sign   SignMode `json:"-" gorm:"-"`
-	Endian Endian   `json:"-" gorm:"-"`
-	// ScalingFunc is the function that is used to scale the signal.
-	ScalingFunc ScalingFunc `json:"-" gorm:"-"`
 }
 
 func (Signal) TableName() string {
 	return "signal"
 }
 
-// ScalingFunc is a function that indicated how a value should be scaled.
-type ScalingFunc func(float64) float64
+// // ScalingFunc is a function that indicated how a value should be scaled.
+// type ScalingFunc func(float64) float64
 
-// Scale scales the value of the signal by the given function.
-func (s Signal) Scale() Signal {
-	if s.ScalingFunc == nil {
-		return s
-	}
-	s.Value = s.ScalingFunc(float64(s.RawValue))
-	return s
-}
+// // Scale scales the value of the signal by the given function.
+// func (s Signal) Scale() Signal {
+// 	if s.ScalingFunc == nil {
+// 		return s
+// 	}
+// 	s.Value = s.ScalingFunc(float64(s.RawValue))
+// 	return s
+// }
 
-// Decode decodes the bytes stored in a Signal object and returns a signal object with the decoded raw value.
-func (s Signal) Decode() Signal {
-	if s.Sign == Signed && s.Endian == BigEndian {
-		s.RawValue = BigEndianBytesToSignedInt(s.Bytes)
-	} else if s.Sign == Signed && s.Endian == LittleEndian {
-		s.RawValue = LittleEndianBytesToSignedInt(s.Bytes)
-	} else if s.Sign == Unsigned && s.Endian == BigEndian {
-		s.RawValue = BigEndianBytesToUnsignedInt(s.Bytes)
-	} else if s.Sign == Unsigned && s.Endian == LittleEndian {
-		s.RawValue = LittleEndianBytesToUnsignedInt(s.Bytes)
-	}
-	return s
-}
+// // Decode decodes the bytes stored in a Signal object and returns a signal object with the decoded raw value.
+// func (s Signal) Decode() Signal {
+// 	if s.Sign == Signed && s.Endian == BigEndian {
+// 		s.RawValue = BigEndianBytesToSignedInt(s.Bytes)
+// 	} else if s.Sign == Signed && s.Endian == LittleEndian {
+// 		s.RawValue = LittleEndianBytesToSignedInt(s.Bytes)
+// 	} else if s.Sign == Unsigned && s.Endian == BigEndian {
+// 		s.RawValue = BigEndianBytesToUnsignedInt(s.Bytes)
+// 	} else if s.Sign == Unsigned && s.Endian == LittleEndian {
+// 		s.RawValue = LittleEndianBytesToUnsignedInt(s.Bytes)
+// 	}
+// 	return s
+// }
 
-// Encode encodes the integer value stored in a Field object and returns a signal object with the encoded bytes.
-func (s Signal) Encode() (Signal, error) {
-	var err error
-	if s.Sign == Signed && s.Endian == BigEndian {
-		s.Bytes, err = BigEndianSignedIntToBinary(s.RawValue, s.Size)
-	} else if s.Sign == Signed && s.Endian == LittleEndian {
-		s.Bytes, err = LittleEndianSignedIntToBinary(s.RawValue, s.Size)
-	} else if s.Sign == Unsigned && s.Endian == BigEndian {
-		s.Bytes, err = BigEndianUnsignedIntToBinary(s.RawValue, s.Size)
-	} else if s.Sign == Unsigned && s.Endian == LittleEndian {
-		s.Bytes, err = LittleEndianUnsignedIntToBinary(s.RawValue, s.Size)
-	} else {
-		return s, fmt.Errorf("invalid sign or endian")
-	}
-	return s, err
-}
+// // Encode encodes the integer value stored in a Field object and returns a signal object with the encoded bytes.
+// func (s Signal) Encode() (Signal, error) {
+// 	var err error
+// 	if s.Sign == Signed && s.Endian == BigEndian {
+// 		s.Bytes, err = BigEndianSignedIntToBinary(s.RawValue, s.Size)
+// 	} else if s.Sign == Signed && s.Endian == LittleEndian {
+// 		s.Bytes, err = LittleEndianSignedIntToBinary(s.RawValue, s.Size)
+// 	} else if s.Sign == Unsigned && s.Endian == BigEndian {
+// 		s.Bytes, err = BigEndianUnsignedIntToBinary(s.RawValue, s.Size)
+// 	} else if s.Sign == Unsigned && s.Endian == LittleEndian {
+// 		s.Bytes, err = LittleEndianUnsignedIntToBinary(s.RawValue, s.Size)
+// 	} else {
+// 		return s, fmt.Errorf("invalid sign or endian")
+// 	}
+// 	return s, err
+// }
 
-// CheckBit returns a signal object with the raw value set to 1 if the bit at the given position is set, otherwise 0.
-// Useful if the signal is a byte that contains multiple boolean flags.
-func (s Signal) CheckBit(bit int) Signal {
-	v := (s.Bytes[0] & (1 << bit)) != 0
-	if v {
-		s.RawValue = 1
-	} else {
-		s.RawValue = 0
-	}
-	return s
-}
+// // CheckBit returns a signal object with the raw value set to 1 if the bit at the given position is set, otherwise 0.
+// // Useful if the signal is a byte that contains multiple boolean flags.
+// func (s Signal) CheckBit(bit int) Signal {
+// 	v := (s.Bytes[0] & (1 << bit)) != 0
+// 	if v {
+// 		s.RawValue = 1
+// 	} else {
+// 		s.RawValue = 0
+// 	}
+// 	return s
+// }
 
-// NewSignal creates a new Signal object with the provided vehicle ID, name, size, sign, endian, and scaling function.
-// If the scaling function is nil, the signal will not be scaled (default to just x1).
-func NewSignal(vehicleID string, name string, size int, sign SignMode, endian Endian, scalingFunc ScalingFunc) Signal {
-	return Signal{
-		VehicleID:   vehicleID,
-		Name:        name,
-		Size:        size,
-		Sign:        sign,
-		Endian:      endian,
-		ScalingFunc: scalingFunc,
-	}
-}
+// // NewSignal creates a new Signal object with the provided vehicle ID, name, size, sign, endian, and scaling function.
+// // If the scaling function is nil, the signal will not be scaled (default to just x1).
+// func NewSignal(vehicleID string, name string, size int, sign SignMode, endian Endian, scalingFunc ScalingFunc) Signal {
+// 	return Signal{
+// 		VehicleID:   vehicleID,
+// 		Name:        name,
+// 		Size:        size,
+// 		Sign:        sign,
+// 		Endian:      endian,
+// 		ScalingFunc: scalingFunc,
+// 	}
+// }
