@@ -129,13 +129,14 @@ func (f Field) Encode() (Field, error) {
 }
 
 // CheckBit takes a Field object and a bit position, and returns the integer value of the bit at the given position (0 or 1).
+// Bit positions are counted from left to right, where bit 0 is the leftmost bit.
 func (f Field) CheckBit(bit int) int {
 	byteIndex := bit / 8
-	bitPosition := bit % 8
+	bitPosition := 7 - (bit % 8)
 	if byteIndex >= len(f.Bytes) {
 		return 0
 	}
-	return int(f.Bytes[byteIndex] & (1 << bitPosition))
+	return int((f.Bytes[byteIndex] >> bitPosition) & 1)
 }
 
 // ExportSignals takes a Field object and exports it as an array of signals.

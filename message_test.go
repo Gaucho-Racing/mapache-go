@@ -1,17 +1,8 @@
 package mapache
 
 import (
-	"fmt"
 	"testing"
-	"time"
-	"unsafe"
 )
-
-func TestTimestamp(t *testing.T) {
-	now := time.Now().UnixMicro()
-	fmt.Println(now)
-	fmt.Printf("Size of timestamp: %d bytes\n", unsafe.Sizeof(now))
-}
 
 func TestMessage(t *testing.T) {
 	ecuStatusMessage := Message{
@@ -92,14 +83,196 @@ func TestMessage(t *testing.T) {
 			t.Errorf("Expected error, got nil")
 		}
 	})
-	t.Run("Valid byte length", func(t *testing.T) {
+	t.Run("Test zero values", func(t *testing.T) {
 		err := ecuStatusMessage.FillFromBytes([]byte{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00})
 		if err != nil {
 			t.Errorf("Expected nil, got %v", err)
 		}
 		signals := ecuStatusMessage.ExportSignals()
 		for _, signal := range signals {
-			fmt.Printf("%s: %f\n", signal.Name, signal.Value)
+			if signal.Value != 0 {
+				t.Errorf("Expected Value 0, got %f", signal.Value)
+			}
+			if signal.RawValue != 0 {
+				t.Errorf("Expected RawValue 0, got %d", signal.RawValue)
+			}
 		}
 	})
+	t.Run("Test nonzero values", func(t *testing.T) {
+		err := ecuStatusMessage.FillFromBytes([]byte{0x12, 0x42, 0xFF, 0x00, 0x31, 0x82, 0x58, 0x72})
+		if err != nil {
+			t.Errorf("Expected nil, got %v", err)
+		}
+		signals := ecuStatusMessage.ExportSignals()
+		expectedValues := []float64{
+			18,
+			0,
+			1,
+			0,
+			0,
+			0,
+			0,
+			1,
+			0,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			3,
+			1,
+			32.5,
+			34.509804,
+			44.705882,
+		}
+		for i, signal := range signals {
+			if int(signal.Value) != int(expectedValues[i]) {
+				t.Errorf("Expected Value %f, got %f", expectedValues[i], signal.Value)
+			}
+		}
+	})
+}
+
+func TestNewField(t *testing.T) {
+	field := NewField("test", 1, Unsigned, BigEndian, nil)
+	if field.Size != 1 {
+		t.Errorf("Expected Size 1, got %d", field.Size)
+	}
+	if field.Sign != Unsigned {
+		t.Errorf("Expected Sign Unsigned, got %d", field.Sign)
+	}
+}
+
+func TestDecode(t *testing.T) {
+	testCases := []struct {
+		name     string
+		field    Field
+		expected int64
+	}{
+		{
+			name: "Signed BigEndian Positive",
+			field: Field{
+				Bytes:  []byte{0x12, 0x34},
+				Size:   2,
+				Sign:   Signed,
+				Endian: BigEndian,
+			},
+			expected: 0x1234,
+		},
+		{
+			name: "Signed BigEndian Negative",
+			field: Field{
+				Bytes:  []byte{0xFF, 0xFE},
+				Size:   2,
+				Sign:   Signed,
+				Endian: BigEndian,
+			},
+			expected: -2,
+		},
+		{
+			name: "Signed LittleEndian Positive",
+			field: Field{
+				Bytes:  []byte{0x34, 0x12},
+				Size:   2,
+				Sign:   Signed,
+				Endian: LittleEndian,
+			},
+			expected: 0x1234,
+		},
+		{
+			name: "Signed LittleEndian Negative",
+			field: Field{
+				Bytes:  []byte{0xFE, 0xFF},
+				Size:   2,
+				Sign:   Signed,
+				Endian: LittleEndian,
+			},
+			expected: -2,
+		},
+		{
+			name: "Unsigned BigEndian",
+			field: Field{
+				Bytes:  []byte{0xFF, 0xFE},
+				Size:   2,
+				Sign:   Unsigned,
+				Endian: BigEndian,
+			},
+			expected: 0xFFFE,
+		},
+		{
+			name: "Unsigned LittleEndian",
+			field: Field{
+				Bytes:  []byte{0xFE, 0xFF},
+				Size:   2,
+				Sign:   Unsigned,
+				Endian: LittleEndian,
+			},
+			expected: 0xFFFE,
+		},
+		{
+			name: "Single Byte Signed Positive",
+			field: Field{
+				Bytes:  []byte{0x7F},
+				Size:   1,
+				Sign:   Signed,
+				Endian: BigEndian,
+			},
+			expected: 127,
+		},
+		{
+			name: "Single Byte Signed Negative",
+			field: Field{
+				Bytes:  []byte{0xCF},
+				Size:   1,
+				Sign:   Signed,
+				Endian: BigEndian,
+			},
+			expected: -49,
+		},
+		{
+			name: "Four Bytes Unsigned BigEndian",
+			field: Field{
+				Bytes:  []byte{0x12, 0x34, 0x56, 0x78},
+				Size:   4,
+				Sign:   Unsigned,
+				Endian: BigEndian,
+			},
+			expected: 0x12345678,
+		},
+		{
+			name: "Four Bytes Unsigned LittleEndian",
+			field: Field{
+				Bytes:  []byte{0x78, 0x56, 0x34, 0x12},
+				Size:   4,
+				Sign:   Unsigned,
+				Endian: LittleEndian,
+			},
+			expected: 0x12345678,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			result := tc.field.Decode()
+			if result.Value != int(tc.expected) {
+				t.Errorf("Expected %d (0x%X), got %d (0x%X)",
+					tc.expected, tc.expected, result.Value, result.Value)
+			}
+		})
+	}
+}
+
+func TestCheckBit(t *testing.T) {
+	testBytes := []byte{0x12, 0x34}
+	field := Field{
+		Bytes: testBytes,
+		Size:  len(testBytes),
+	}
+	for i := 0; i < field.Size*8; i++ {
+		if field.CheckBit(i) != int((testBytes[i/8]>>uint(7-i%8))&1) {
+			t.Errorf("Expected %d, got %d", int((testBytes[i/8]>>uint(7-i%8))&1), field.CheckBit(i))
+		}
+	}
 }
