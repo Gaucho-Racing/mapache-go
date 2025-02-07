@@ -2,12 +2,64 @@ package mapache
 
 import "fmt"
 
-type Message struct {
-	ID     int
-	Data   []byte
-	Fields []Field
+// A Message is a single data message from a vehicle, comprised of a list of Fields.
+type Message []Field
+
+// Length returns the number of fields in the message.
+func (m Message) Length() int {
+	return len(m)
 }
 
+// Size returns the total number of bytes in the message.
+func (m Message) Size() int {
+	size := 0
+	for _, field := range m {
+		size += field.Size
+	}
+	return size
+}
+
+// FillFromBytes fills the Fields of a Message with the provided byte array.
+// It returns an error if the data length does not match the size of the Message.
+func (m Message) FillFromBytes(data []byte) error {
+	if len(data) != m.Size() {
+		return fmt.Errorf("invalid data length, expected %d bytes, got %d", m.Size(), len(data))
+	}
+	counter := 0
+	for i, field := range m {
+		field.Bytes = data[counter : counter+field.Size]
+		counter += field.Size
+		m[i] = field
+	}
+	return nil
+}
+
+// FillFromInts fills the Fields of a Message with the provided integers.
+// It returns an error if the number of integers does not match the number of Fields in the Message.
+func (m Message) FillFromInts(ints []int) error {
+	if len(ints) != m.Length() {
+		return fmt.Errorf("invalid ints length, expected %d, got %d", m.Length(), len(ints))
+	}
+	for i, field := range m {
+		field.Value = ints[i]
+		m[i] = field
+	}
+	return nil
+}
+
+// ExportSignals returns a list of all Signals contained in each Field of the Message.
+// Basically just calls ExportSignals on each Field and concatenates the results.
+func (m Message) ExportSignals() []Signal {
+	signals := []Signal{}
+	for _, field := range m {
+		signals = append(signals, field.ExportSignals()...)
+	}
+	return signals
+}
+
+// Field is a single field of a message. It will always be at least 1 byte in size.
+// It is meant to be an intermediary structure, purely for encoding and decoding byte arrays.
+// A single field may contain multiple signals (tpyically when it contains multiple errors as boolean flags).
 type Field struct {
 	// Name of the field. Will be mapped to a signal name unless otherwise specified by ExportSignalFunc.
 	Name string
@@ -27,12 +79,11 @@ type Field struct {
 // exported as a single signal without scaling.
 type ExportSignalFunc func(Field) []Signal
 
-// NewField creates a new Field object with the given name, bytes, size, sign, endian, and export function.
+// NewField creates a new Field object with the given name, size, sign, endian, and export function.
 // If no export function is provided, DefaultSignalExportFunc will be used.
-func NewField(name string, bytes []byte, size int, sign SignMode, endian Endian, exportSignalFunc ExportSignalFunc) Field {
+func NewField(name string, size int, sign SignMode, endian Endian, exportSignalFunc ExportSignalFunc) Field {
 	return Field{
 		Name:             name,
-		Bytes:            bytes,
 		Size:             size,
 		Sign:             sign,
 		Endian:           endian,
