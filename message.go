@@ -20,6 +20,7 @@ func (m Message) Size() int {
 }
 
 // FillFromBytes fills the Fields of a Message with the provided byte array.
+// It decodes the bytes into integer values and stores them in the Value of each Field.
 // It returns an error if the data length does not match the size of the Message.
 func (m Message) FillFromBytes(data []byte) error {
 	if len(data) != m.Size() {
@@ -29,12 +30,13 @@ func (m Message) FillFromBytes(data []byte) error {
 	for i, field := range m {
 		field.Bytes = data[counter : counter+field.Size]
 		counter += field.Size
-		m[i] = field
+		m[i] = field.Decode()
 	}
 	return nil
 }
 
 // FillFromInts fills the Fields of a Message with the provided integers.
+// It encodes the integers into bytes and stores them in the Bytes of each Field.
 // It returns an error if the number of integers does not match the number of Fields in the Message.
 func (m Message) FillFromInts(ints []int) error {
 	if len(ints) != m.Length() {
@@ -42,6 +44,10 @@ func (m Message) FillFromInts(ints []int) error {
 	}
 	for i, field := range m {
 		field.Value = ints[i]
+		field, err := field.Encode()
+		if err != nil {
+			return err
+		}
 		m[i] = field
 	}
 	return nil
@@ -122,9 +128,14 @@ func (f Field) Encode() (Field, error) {
 	return f, err
 }
 
-// CheckBit takes a Field object and a bit position, and returns true if the bit at the given position is set to 1, otherwise false.
-func (f Field) CheckBit(bit int) bool {
-	return (f.Bytes[0] & (1 << bit)) != 0
+// CheckBit takes a Field object and a bit position, and returns the integer value of the bit at the given position (0 or 1).
+func (f Field) CheckBit(bit int) int {
+	byteIndex := bit / 8
+	bitPosition := bit % 8
+	if byteIndex >= len(f.Bytes) {
+		return 0
+	}
+	return int(f.Bytes[byteIndex] & (1 << bitPosition))
 }
 
 // ExportSignals takes a Field object and exports it as an array of signals.
