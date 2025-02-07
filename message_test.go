@@ -264,6 +264,176 @@ func TestDecode(t *testing.T) {
 	}
 }
 
+func TestEncode(t *testing.T) {
+	testCases := []struct {
+		name        string
+		field       Field
+		expected    []byte
+		expectError bool
+	}{
+		{
+			name: "Signed BigEndian Positive",
+			field: Field{
+				Value:  0x1234,
+				Size:   2,
+				Sign:   Signed,
+				Endian: BigEndian,
+			},
+			expected: []byte{0x12, 0x34},
+		},
+		{
+			name: "Signed BigEndian Negative",
+			field: Field{
+				Value:  -2,
+				Size:   2,
+				Sign:   Signed,
+				Endian: BigEndian,
+			},
+			expected: []byte{0xFF, 0xFE},
+		},
+		{
+			name: "Signed LittleEndian Positive",
+			field: Field{
+				Value:  0x1234,
+				Size:   2,
+				Sign:   Signed,
+				Endian: LittleEndian,
+			},
+			expected: []byte{0x34, 0x12},
+		},
+		{
+			name: "Signed LittleEndian Negative",
+			field: Field{
+				Value:  -2,
+				Size:   2,
+				Sign:   Signed,
+				Endian: LittleEndian,
+			},
+			expected: []byte{0xFE, 0xFF},
+		},
+		{
+			name: "Unsigned BigEndian",
+			field: Field{
+				Value:  0xFFFE,
+				Size:   2,
+				Sign:   Unsigned,
+				Endian: BigEndian,
+			},
+			expected: []byte{0xFF, 0xFE},
+		},
+		{
+			name: "Unsigned LittleEndian",
+			field: Field{
+				Value:  0xFFFE,
+				Size:   2,
+				Sign:   Unsigned,
+				Endian: LittleEndian,
+			},
+			expected: []byte{0xFE, 0xFF},
+		},
+		{
+			name: "Single Byte Signed Positive",
+			field: Field{
+				Value:  127,
+				Size:   1,
+				Sign:   Signed,
+				Endian: BigEndian,
+			},
+			expected: []byte{0x7F},
+		},
+		{
+			name: "Single Byte Signed Negative",
+			field: Field{
+				Value:  -49,
+				Size:   1,
+				Sign:   Signed,
+				Endian: BigEndian,
+			},
+			expected: []byte{0xCF},
+		},
+		{
+			name: "Four Bytes Unsigned BigEndian",
+			field: Field{
+				Value:  0x12345678,
+				Size:   4,
+				Sign:   Unsigned,
+				Endian: BigEndian,
+			},
+			expected: []byte{0x12, 0x34, 0x56, 0x78},
+		},
+		{
+			name: "Four Bytes Unsigned LittleEndian",
+			field: Field{
+				Value:  0x12345678,
+				Size:   4,
+				Sign:   Unsigned,
+				Endian: LittleEndian,
+			},
+			expected: []byte{0x78, 0x56, 0x34, 0x12},
+		},
+		{
+			name: "Value Too Large For Size",
+			field: Field{
+				Value:  0x1234,
+				Size:   1,
+				Sign:   Unsigned,
+				Endian: BigEndian,
+			},
+			expectError: true,
+		},
+		{
+			name: "Negative Value For Unsigned",
+			field: Field{
+				Value:  -1,
+				Size:   2,
+				Sign:   Unsigned,
+				Endian: BigEndian,
+			},
+			expectError: true,
+		},
+		{
+			name: "Invalid Sign Value",
+			field: Field{
+				Value:  123,
+				Size:   2,
+				Sign:   3, // Invalid sign value
+				Endian: BigEndian,
+			},
+			expectError: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			result, err := tc.field.Encode()
+
+			if tc.expectError {
+				if err == nil {
+					t.Error("Expected error but got nil")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
+				return
+			}
+
+			if len(result.Bytes) != len(tc.expected) {
+				t.Errorf("Expected %d bytes, got %d bytes", len(tc.expected), len(result.Bytes))
+				return
+			}
+
+			for i := 0; i < len(tc.expected); i++ {
+				if result.Bytes[i] != tc.expected[i] {
+					t.Errorf("Byte %d: expected 0x%02X, got 0x%02X",
+						i, tc.expected[i], result.Bytes[i])
+				}
+			}
+		})
+	}
+}
+
 func TestCheckBit(t *testing.T) {
 	testBytes := []byte{0x12, 0x34}
 	field := Field{
