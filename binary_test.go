@@ -367,7 +367,7 @@ func TestBigEndianBytesToSignedInt(t *testing.T) {
 	})
 	t.Run("Test 255 1 Byte", func(t *testing.T) {
 		input := []byte{255}
-		expected := 255
+		expected := -1
 		v := BigEndianBytesToSignedInt(input)
 		if !reflect.DeepEqual(v, expected) {
 			t.Errorf("Expected %v, got %v", expected, v)
@@ -818,7 +818,7 @@ func TestLittleEndianBytesToSignedInt(t *testing.T) {
 	})
 	t.Run("Test 255 1 Byte", func(t *testing.T) {
 		input := []byte{255}
-		expected := 255
+		expected := -1
 		v := LittleEndianBytesToSignedInt(input)
 		if !reflect.DeepEqual(v, expected) {
 			t.Errorf("Expected %v, got %v", expected, v)

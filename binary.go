@@ -138,8 +138,7 @@ func BigEndianBytesToUnsignedInt(bytes []byte) int {
 // The function returns the integer value of the bytes.
 func BigEndianBytesToSignedInt(bytes []byte) int {
 	if len(bytes) == 1 {
-		bytes = append([]byte{byte(0)}, bytes...)
-		return int(int16(binary.BigEndian.Uint16(bytes)))
+		return int(int8(bytes[0]))
 	} else if len(bytes) == 2 {
 		return int(int16(binary.BigEndian.Uint16(bytes)))
 	} else if len(bytes) == 4 {
@@ -290,8 +289,7 @@ func LittleEndianBytesToUnsignedInt(bytes []byte) int {
 // The function returns the integer value of the bytes.
 func LittleEndianBytesToSignedInt(bytes []byte) int {
 	if len(bytes) == 1 {
-		bytes = append(bytes, byte(0))
-		return int(int16(binary.LittleEndian.Uint16(bytes)))
+		return int(int8(bytes[0]))
 	} else if len(bytes) == 2 {
 		return int(int16(binary.LittleEndian.Uint16(bytes)))
 	} else if len(bytes) == 4 {
