@@ -20,7 +20,7 @@ type Vehicle struct {
 
 	// The UploadKey is a unique identifier for the vehicle's uploaded files.
 	// This is used to authenticate the vehicle when processing uploaded data.
-	UploadKey string `json:"upload_key"`
+	UploadKey int `json:"upload_key"`
 
 	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime;precision:6"`
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime;precision:6"`
