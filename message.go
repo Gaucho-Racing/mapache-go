@@ -149,7 +149,7 @@ func (f Field) ExportSignals() []Signal {
 
 // DefaultSignalExportFunc is the default export function for a field. It exports the field as a single signal with no scaling.
 func DefaultSignalExportFunc(f Field) []Signal {
-	return []Signal{Signal{
+	return []Signal{{
 		Name:     f.Name,
 		Value:    float64(f.Value),
 		RawValue: f.Value,

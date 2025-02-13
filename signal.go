@@ -22,12 +22,13 @@ const (
 
 // Signal is a type to represent an individual signal coming from the vehicle.
 // This can be something like a sensor reading, a boolean flag, or a status code.
+// Timestamp, VehicleID, and Name are together used to uniquely identify a signal row entry.
 type Signal struct {
-	// ID is a unique identifier for the signal.
-	ID string `json:"id" gorm:"primaryKey"`
+	// Timestamp is the Unix microseconds of the signal.
+	Timestamp int `json:"timestamp"`
 	// VehicleID is the unique identifier for the vehicle that the signal is associated with.
 	VehicleID string `json:"vehicle_id"`
-	// Name represents the type of signal.
+	// Name represents the name of the signal.
 	Name string `json:"name"`
 	// Value is the value of the signal post-scaling.
 	Value float64 `json:"value"`
