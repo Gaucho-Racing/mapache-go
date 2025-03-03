@@ -57,7 +57,7 @@ type Lap struct {
 	// ID is a unique identifier for the lap.
 	ID string `json:"id" gorm:"primaryKey"`
 	// The TripID is the unique identifier for the trip that the lap is associated with.
-	TripID string `json:"trip_id" gorm:"primaryKey"`
+	TripID string `json:"trip_id"`
 	// The Name is the public-facing name of the lap.
 	Name string `json:"name"`
 	// The Timestamp is the time at which the lap segment is over.
