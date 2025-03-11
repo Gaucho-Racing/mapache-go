@@ -41,9 +41,9 @@ type Trip struct {
 	// In theory, would be a markdown-supported field.
 	Description string `json:"description"`
 	// The StartTime is the time at which the trip started.
-	StartTime time.Time `json:"start_time"`
+	StartTime time.Time `json:"start_time" gorm:"precision:6"`
 	// The EndTime is the time at which the trip is over.
-	EndTime time.Time `json:"end_time"`
+	EndTime time.Time `json:"end_time" gorm:"precision:6"`
 	// The Laps field is a list of laps that are associated with the trip.
 	// Laps are essentially markers that separate the trip into smaller segments.
 	Laps []Lap `json:"laps"`
@@ -63,7 +63,7 @@ type Lap struct {
 	// The Timestamp is the time at which the lap segment is over.
 	// The start time of the lap would be inferred from the previous lap's end time
 	// or the beginning of the trip.
-	Timestamp time.Time `json:"timestamp"`
+	Timestamp time.Time `json:"timestamp" gorm:"precision:6"`
 }
 
 func (Lap) TableName() string {
