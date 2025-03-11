@@ -46,7 +46,7 @@ type Trip struct {
 	EndTime time.Time `json:"end_time" gorm:"precision:6"`
 	// The Laps field is a list of laps that are associated with the trip.
 	// Laps are essentially markers that separate the trip into smaller segments.
-	Laps []Lap `json:"laps"`
+	Laps []Lap `json:"laps" gorm:"-"`
 }
 
 func (Trip) TableName() string {
