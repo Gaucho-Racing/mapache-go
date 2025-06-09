@@ -24,7 +24,7 @@ const (
 // This can be something like a sensor reading, a boolean flag, or a status code.
 // Timestamp, VehicleID, and Name are together used to uniquely identify a signal row entry.
 type Signal struct {
-	// Timestamp is the Unix milliseconds of the signal.
+	// Timestamp is the Unix microseconds of the signal.
 	Timestamp int `json:"timestamp"`
 	// VehicleID is the unique identifier for the vehicle that the signal is associated with.
 	VehicleID string `json:"vehicle_id"`
