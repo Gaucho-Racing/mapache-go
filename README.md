@@ -8,6 +8,9 @@
 
 mapache-go is a library that provides access to various abstractions used by [Mapache](https://github.com/gaucho-racing/mapache) services.
 
+> [!IMPORTANT]
+> #### This library has now been merged into the main [Mapache monorepo](https://github.com/gaucho-racing/mapache).
+
 ## Getting started
 
 ### Prerequisites
